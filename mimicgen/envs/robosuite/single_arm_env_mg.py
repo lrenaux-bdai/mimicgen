@@ -5,7 +5,7 @@
 import os
 import xml.etree.ElementTree as ET
 import robosuite
-from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
+from robosuite.environments.manipulation.manipulation_env import ManipulationEnv
 from robosuite.utils.mjcf_utils import string_to_array
 
 try:
@@ -17,10 +17,11 @@ except ImportError:
 import mimicgen
 
 
-class SingleArmEnv_MG(SingleArmEnv):
+class SingleArmEnv_MG(ManipulationEnv):
     """
     Custom version of base class for single arm robosuite tasks for mimicgen.
     """
+
     def edit_model_xml(self, xml_str):
         """
         This function edits the model xml with custom changes, including resolving relative paths,
@@ -50,34 +51,53 @@ class SingleArmEnv_MG(SingleArmEnv):
             old_path_split = old_path.split("/")
 
             # replace all paths to robosuite assets
-            check_lst = [loc for loc, val in enumerate(old_path_split) if val == "robosuite"]
+            check_lst = [
+                loc for loc, val in enumerate(old_path_split) if val == "robosuite"
+            ]
             if len(check_lst) > 0:
-                ind = max(check_lst) # last occurrence index
+                ind = max(check_lst)  # last occurrence index
                 new_path_split = path_split + old_path_split[ind + 1 :]
                 new_path = "/".join(new_path_split)
                 elem.set("file", new_path)
 
             # replace all paths to mimicgen assets
-            check_lst = [loc for loc, val in enumerate(old_path_split) if val == "mimicgen"]
+            check_lst = [
+                loc for loc, val in enumerate(old_path_split) if val == "mimicgen"
+            ]
             if len(check_lst) > 0:
-                ind = max(check_lst) # last occurrence index
-                new_path_split = os.path.split(mimicgen.__file__)[0].split("/") + old_path_split[ind + 1 :]
+                ind = max(check_lst)  # last occurrence index
+                new_path_split = (
+                    os.path.split(mimicgen.__file__)[0].split("/")
+                    + old_path_split[ind + 1 :]
+                )
                 new_path = "/".join(new_path_split)
                 elem.set("file", new_path)
 
             # note: needed since some datasets may have old paths when repo was named mimicgen_envs
-            check_lst = [loc for loc, val in enumerate(old_path_split) if val == "mimicgen_envs"]
+            check_lst = [
+                loc for loc, val in enumerate(old_path_split) if val == "mimicgen_envs"
+            ]
             if len(check_lst) > 0:
-                ind = max(check_lst) # last occurrence index
-                new_path_split = os.path.split(mimicgen.__file__)[0].split("/") + old_path_split[ind + 1 :]
+                ind = max(check_lst)  # last occurrence index
+                new_path_split = (
+                    os.path.split(mimicgen.__file__)[0].split("/")
+                    + old_path_split[ind + 1 :]
+                )
                 new_path = "/".join(new_path_split)
                 elem.set("file", new_path)
 
             # replace all paths to robosuite_task_zoo assets
-            check_lst = [loc for loc, val in enumerate(old_path_split) if val == "robosuite_task_zoo"]
+            check_lst = [
+                loc
+                for loc, val in enumerate(old_path_split)
+                if val == "robosuite_task_zoo"
+            ]
             if len(check_lst) > 0:
-                ind = max(check_lst) # last occurrence index
-                new_path_split = os.path.split(robosuite_task_zoo.__file__)[0].split("/") + old_path_split[ind + 1 :]
+                ind = max(check_lst)  # last occurrence index
+                new_path_split = (
+                    os.path.split(robosuite_task_zoo.__file__)[0].split("/")
+                    + old_path_split[ind + 1 :]
+                )
                 new_path = "/".join(new_path_split)
                 elem.set("file", new_path)
 
@@ -91,9 +111,15 @@ class SingleArmEnv_MG(SingleArmEnv):
         """
         check_1 = self._check_grasp(gripper=gripper, object_geoms=object_geoms)
 
-        check_2 = self._check_grasp(gripper=["gripper0_finger1_collision", "gripper0_finger2_pad_collision"], object_geoms=object_geoms)
+        check_2 = self._check_grasp(
+            gripper=["gripper0_finger1_collision", "gripper0_finger2_pad_collision"],
+            object_geoms=object_geoms,
+        )
 
-        check_3 = self._check_grasp(gripper=["gripper0_finger2_collision", "gripper0_finger1_pad_collision"], object_geoms=object_geoms)
+        check_3 = self._check_grasp(
+            gripper=["gripper0_finger2_collision", "gripper0_finger1_pad_collision"],
+            object_geoms=object_geoms,
+        )
 
         return check_1 or check_2 or check_3
 
@@ -103,6 +129,10 @@ class SingleArmEnv_MG(SingleArmEnv):
         """
         arena.set_camera(
             camera_name="agentview_full",
-            pos=string_to_array("0.753078462147161 2.062036796036723e-08 1.5194726087166726"),
-            quat=string_to_array("0.6432409286499023 0.293668270111084 0.2936684489250183 0.6432408690452576"),
+            pos=string_to_array(
+                "0.753078462147161 2.062036796036723e-08 1.5194726087166726"
+            ),
+            quat=string_to_array(
+                "0.6432409286499023 0.293668270111084 0.2936684489250183 0.6432408690452576"
+            ),
         )
