@@ -14,10 +14,10 @@ from robosuite.utils.placement_samplers import SequentialCompositeSampler, Unifo
 from robosuite.utils.observables import Observable, sensor
 
 from mimicgen.models.robosuite.objects import NeedleObject, RingTripodObject
-from mimicgen.envs.robosuite.single_arm_env_mg import SingleArmEnv_MG
+from mimicgen.envs.robosuite.single_arm_env_mg import ManipulationEnv_MG
 
 
-class Threading(SingleArmEnv_MG):
+class Threading(ManipulationEnv_MG):
     """
     This class corresponds to the threading task for a single robot arm.
 

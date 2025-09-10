@@ -17,7 +17,7 @@ except ImportError:
 import mimicgen
 
 
-class SingleArmEnv_MG(ManipulationEnv):
+class ManipulationEnv_MG(ManipulationEnv):
     """
     Custom version of base class for single arm robosuite tasks for mimicgen.
     """

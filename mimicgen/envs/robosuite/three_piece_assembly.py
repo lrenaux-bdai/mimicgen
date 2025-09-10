@@ -17,10 +17,10 @@ from robosuite.utils.observables import Observable, sensor
 from robosuite.utils.mjcf_utils import CustomMaterial, find_elements, string_to_array
 
 from mimicgen.models.robosuite.objects import BoxPatternObject
-from mimicgen.envs.robosuite.single_arm_env_mg import SingleArmEnv_MG
+from mimicgen.envs.robosuite.single_arm_env_mg import ManipulationEnv_MG
 
 
-class ThreePieceAssembly(SingleArmEnv_MG):
+class ThreePieceAssembly(ManipulationEnv_MG):
     """
     This class corresponds to the three piece assembly task for a single robot arm.
 
@@ -645,8 +645,8 @@ class ThreePieceAssembly(SingleArmEnv_MG):
 
     def _create_obj_centric_sensors(self, modality="object_centric"):
         """
-        Creates sensors for poses relative to certain objects. This is abstracted in a separate 
-        function call so that we don't have local function naming collisions during 
+        Creates sensors for poses relative to certain objects. This is abstracted in a separate
+        function call so that we don't have local function naming collisions during
         the _setup_observables() call.
 
         Args:
