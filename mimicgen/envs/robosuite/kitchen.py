@@ -13,7 +13,7 @@ from copy import deepcopy
 
 import robosuite
 import robosuite.utils.transform_utils as T
-from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
+from robosuite.environments.manipulation.single_arm_env import ManipulationEnv
 from robosuite.models.arenas import TableArena
 from robosuite.models.tasks import ManipulationTask
 from robosuite.models.objects import BoxObject, MujocoXMLObject
@@ -27,7 +27,7 @@ from robosuite_task_zoo.environments.manipulation.kitchen import KitchenEnv
 from robosuite_task_zoo.models.kitchen import PotObject, StoveObject, ButtonObject, ServingRegionObject
 
 import mimicgen
-from mimicgen.envs.robosuite.single_arm_env_mg import SingleArmEnv_MG
+from mimicgen.envs.robosuite.single_arm_env_mg import ManipulationEnv_MG
 
 
 class StoveObjectNew(StoveObject):
@@ -76,7 +76,7 @@ class ServingRegionObjectNew(MujocoXMLObject):
         return 0.123
 
 
-class Kitchen_D0(KitchenEnv, SingleArmEnv_MG):
+class Kitchen_D0(KitchenEnv, ManipulationEnv_MG):
     """
     Augment BUDS kitchen task for mimicgen.
     """
@@ -88,7 +88,7 @@ class Kitchen_D0(KitchenEnv, SingleArmEnv_MG):
 
     def edit_model_xml(self, xml_str):
         # make sure we don't get a conflict for function implementation
-        return SingleArmEnv_MG.edit_model_xml(self, xml_str)
+        return ManipulationEnv_MG.edit_model_xml(self, xml_str)
 
     def _reset_internal(self):
         """
@@ -109,7 +109,7 @@ class Kitchen_D0(KitchenEnv, SingleArmEnv_MG):
         serving_region_pos = self.sim.data.body_xpos[self.serving_region_id]
         dist_serving_pot = serving_region_pos - pot_pos
         pot_in_serving_region = np.abs(dist_serving_pot[0]) < 0.05 and np.abs(dist_serving_pot[1]) < 0.10 and np.abs(dist_serving_pot[2]) < 0.05
-        
+
         # if pot bottom is in contact with stove
         pot_bottom_in_contact_with_stove = self.check_contact("PotObject_body_0", "Stove1_collision_burner")
 
@@ -134,7 +134,7 @@ class Kitchen_D0(KitchenEnv, SingleArmEnv_MG):
 
 class Kitchen_D1(Kitchen_D0):
     """
-    Specify wider distribution for objects including objects that didn't move before. We also had to make some objects 
+    Specify wider distribution for objects including objects that didn't move before. We also had to make some objects
     movable that were fixtures before.
     """
     def _reset_internal(self):
@@ -142,8 +142,8 @@ class Kitchen_D1(Kitchen_D0):
         Update to make sure placement initializer can be used to set poses of objects
         that used to be fixtures before.
         """
-        SingleArmEnv._reset_internal(self)
-        self.has_stove_turned_on = False 
+        ManipulationEnv._reset_internal(self)
+        self.has_stove_turned_on = False
 
         # Reset all object positions using initializer sampler if we're not directly loading from an xml
         if not self.deterministic_reset:
@@ -316,7 +316,7 @@ class Kitchen_D1(Kitchen_D0):
         they can move on each episode reset. Also updates the list of objects so that
         we get observables for the button.
         """
-        SingleArmEnv._load_model(self)
+        ManipulationEnv._load_model(self)
 
         # Adjust base pose accordingly
         xpos = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])
@@ -345,8 +345,8 @@ class Kitchen_D1(Kitchen_D0):
             quat=[0.4144233167171478, 0.3100920617580414,
             0.49641484022140503, 0.6968992352485657]
         )
-        
-        
+
+
         bread = CustomMaterial(
             texture="Bread",
             tex_name="bread",
@@ -379,7 +379,7 @@ class Kitchen_D1(Kitchen_D0):
             "specular": "0.4",
             "shininess": "0.1"
         }
-        
+
         greenwood = CustomMaterial(
             texture="WoodGreen",
             tex_name="greenwood",
@@ -394,7 +394,7 @@ class Kitchen_D1(Kitchen_D0):
             tex_attrib=tex_attrib,
             mat_attrib=mat_attrib,
         )
-        
+
         bluewood = CustomMaterial(
             texture="WoodBlue",
             tex_name="bluewood",
@@ -431,11 +431,11 @@ class Kitchen_D1(Kitchen_D0):
         # serving_region_object = self.serving_region.get_obj()
         # serving_region_object.set("pos", array_to_string((0.345, -0.15, 0.003)))
         # mujoco_arena.table_body.append(serving_region_object)
-        
+
         self.pot_object = PotObject(
             name="PotObject",
         )
-        
+
         for obj_body in [
                 self.button_object_1,
                 self.stove_object_1,
@@ -458,10 +458,10 @@ class Kitchen_D1(Kitchen_D0):
             material=bread,
             density=500.,
         )
-        
+
         # make placement initializer
         self._get_placement_initializer()
-        
+
         mujoco_objects = [self.bread_ingredient,
                           self.pot_object,
                           self.stove_object_1,
@@ -472,7 +472,7 @@ class Kitchen_D1(Kitchen_D0):
         # task includes arena, robot, and objects of interest
         self.model = ManipulationTask(
             mujoco_arena=mujoco_arena,
-            mujoco_robots=[robot.robot_model for robot in self.robots], 
+            mujoco_robots=[robot.robot_model for robot in self.robots],
             mujoco_objects=mujoco_objects,
         )
         self.stoves = {1: self.stove_object_1,
@@ -480,7 +480,7 @@ class Kitchen_D1(Kitchen_D0):
         }
 
         self.num_stoves = len(self.stoves.keys())
-        
+
         self.buttons = {1: self.button_object_1,
                         # 2: self.button_object_2,
         }
@@ -492,7 +492,7 @@ class Kitchen_D1(Kitchen_D0):
             self.serving_region,
             self.button_object_1,
         ]
-        
+
         self.model.merge_assets(self.button_object_1)
         self.model.merge_assets(self.stove_object_1)
         self.model.merge_assets(self.serving_region)

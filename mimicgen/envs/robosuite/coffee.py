@@ -10,7 +10,7 @@ import numpy as np
 from robosuite.utils.mjcf_utils import CustomMaterial, add_material, find_elements, string_to_array
 
 import robosuite.utils.transform_utils as T
-from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
+from robosuite.environments.manipulation.single_arm_env import ManipulationEnv
 
 from robosuite.models.arenas import TableArena
 from robosuite.models.tasks import ManipulationTask
@@ -19,10 +19,10 @@ from robosuite.utils.observables import Observable, sensor
 
 import mimicgen
 from mimicgen.models.robosuite.objects import BlenderObject, CoffeeMachinePodObject, CoffeeMachineObject, LongDrawerObject, CupObject
-from mimicgen.envs.robosuite.single_arm_env_mg import SingleArmEnv_MG
+from mimicgen.envs.robosuite.single_arm_env_mg import ManipulationEnv_MG
 
 
-class Coffee(SingleArmEnv_MG):
+class Coffee(ManipulationEnv_MG):
     """
     This class corresponds to the coffee task for a single robot arm.
 
@@ -501,8 +501,8 @@ class Coffee(SingleArmEnv_MG):
 
     def _create_obj_centric_sensors(self, modality="object_centric"):
         """
-        Creates sensors for poses relative to certain objects. This is abstracted in a separate 
-        function call so that we don't have local function naming collisions during 
+        Creates sensors for poses relative to certain objects. This is abstracted in a separate
+        function call so that we don't have local function naming collisions during
         the _setup_observables() call.
 
         Args:
@@ -599,7 +599,7 @@ class Coffee(SingleArmEnv_MG):
 
     def _check_lid(self):
         # lid should be closed (angle should be less than 5 degrees)
-        hinge_tolerance = 15. * np.pi / 180. 
+        hinge_tolerance = 15. * np.pi / 180.
         hinge_angle = self.sim.data.qpos[self.hinge_qpos_addr]
         lid_check = (hinge_angle < hinge_tolerance)
         return lid_check
@@ -844,7 +844,7 @@ class Coffee_D2(Coffee_D1):
 class CoffeePreparation(Coffee):
     """
     Harder coffee task where the task starts with materials in drawer and coffee machine closed. The robot
-    needs to retrieve the coffee pod and mug from the drawer, open the coffee machine, place the pod and mug 
+    needs to retrieve the coffee pod and mug from the drawer, open the coffee machine, place the pod and mug
     in the machine, and then close the lid.
     """
     def _get_mug_model(self):
@@ -872,7 +872,7 @@ class CoffeePreparation(Coffee):
         """
         Loads an xml model, puts it in self.model
         """
-        SingleArmEnv._load_model(self)
+        ManipulationEnv._load_model(self)
 
         # Adjust base pose accordingly
         xpos = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])
@@ -971,7 +971,7 @@ class CoffeePreparation(Coffee):
         )
         # HACK: merge in mug afterwards because its number of geoms may change
         #       and this may break the generate_id_mappings function in task.py
-        self.model.merge_objects([self.mug]) # add cleanup object to model 
+        self.model.merge_objects([self.mug]) # add cleanup object to model
 
     def _get_initial_placement_bounds(self):
         """
@@ -1013,7 +1013,7 @@ class CoffeePreparation(Coffee):
                 # z_rot=(0.0, 0.0),
                 x=(0.05, 0.20),
                 y=(0.05, 0.25),
-                z_rot=(0.0, 0.0), 
+                z_rot=(0.0, 0.0),
                 reference=self.table_offset,
             ),
             coffee_pod=dict(
@@ -1107,7 +1107,7 @@ class CoffeePreparation(Coffee):
         """
         Resets simulation internal configurations.
         """
-        SingleArmEnv._reset_internal(self)
+        ManipulationEnv._reset_internal(self)
 
         # Reset all object positions using initializer sampler if we're not directly loading from an xml
         if not self.deterministic_reset:
@@ -1278,7 +1278,7 @@ class CoffeePreparation_D1(CoffeePreparation_D0):
             mug=dict(
                 x=(-0.15, 0.20),
                 y=(0.05, 0.25),
-                z_rot=(0.0, 2. * np.pi), 
+                z_rot=(0.0, 2. * np.pi),
                 reference=self.table_offset,
             ),
             coffee_pod=dict(

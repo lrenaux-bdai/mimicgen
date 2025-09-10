@@ -14,7 +14,7 @@ from six import with_metaclass
 from copy import deepcopy
 
 import robosuite
-from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
+from robosuite.environments.manipulation.single_arm_env import ManipulationEnv
 from robosuite.models.arenas import TableArena
 from robosuite.models.tasks import ManipulationTask
 from robosuite.models.objects import HammerObject, MujocoXMLObject
@@ -27,11 +27,11 @@ import robosuite_task_zoo
 from robosuite_task_zoo.environments.manipulation.hammer_place import HammerPlaceEnv
 
 import mimicgen
-from mimicgen.envs.robosuite.single_arm_env_mg import SingleArmEnv_MG
+from mimicgen.envs.robosuite.single_arm_env_mg import ManipulationEnv_MG
 from mimicgen.models.robosuite.objects import DrawerObject
 
 
-class HammerCleanup_D0(HammerPlaceEnv, SingleArmEnv_MG):
+class HammerCleanup_D0(HammerPlaceEnv, ManipulationEnv_MG):
     """
     Augment BUDS hammer place task for mimicgen.
     """
@@ -41,13 +41,13 @@ class HammerCleanup_D0(HammerPlaceEnv, SingleArmEnv_MG):
 
     def edit_model_xml(self, xml_str):
         # make sure we don't get a conflict for function implementation
-        return SingleArmEnv_MG.edit_model_xml(self, xml_str)
+        return ManipulationEnv_MG.edit_model_xml(self, xml_str)
 
     def _load_model(self):
         """
         Copied exactly from HammerPlaceEnv, but swaps out the cabinet object.
         """
-        SingleArmEnv._load_model(self)
+        ManipulationEnv._load_model(self)
 
         # Adjust base pose accordingly
         xpos = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])
@@ -75,8 +75,8 @@ class HammerCleanup_D0(HammerPlaceEnv, SingleArmEnv_MG):
             pos=[0.5586131746834771, 0.3, 1.2903500240372423],
             quat=[0.4144233167171478, 0.3100920617580414, 0.49641484022140503, 0.6968992352485657]
         )
-        
-        
+
+
         bread = CustomMaterial(
             texture="Bread",
             tex_name="bread",
@@ -118,7 +118,7 @@ class HammerCleanup_D0(HammerPlaceEnv, SingleArmEnv_MG):
             "specular": "0.4",
             "shininess": "0.1"
         }
-        
+
         greenwood = CustomMaterial(
             texture="WoodGreen",
             tex_name="greenwood",
@@ -133,7 +133,7 @@ class HammerCleanup_D0(HammerPlaceEnv, SingleArmEnv_MG):
             tex_attrib=tex_attrib,
             mat_attrib=mat_attrib,
         )
-        
+
         bluewood = CustomMaterial(
             texture="WoodBlue",
             tex_name="bluewood",
@@ -151,7 +151,7 @@ class HammerCleanup_D0(HammerPlaceEnv, SingleArmEnv_MG):
         )
 
         ingredient_size = [0.03, 0.018, 0.025]
-        
+
         self.sorting_object = HammerObject(name="hammer",
                                            handle_length=(0.045, 0.05),
                                            handle_radius=(0.012, 0.012),
@@ -161,7 +161,7 @@ class HammerCleanup_D0(HammerPlaceEnv, SingleArmEnv_MG):
         self.cabinet_object = DrawerObject(
             name="CabinetObject")
         cabinet_object = self.cabinet_object.get_obj(); cabinet_object.set("pos", array_to_string((0.2, 0.30, 0.03))); mujoco_arena.table_body.append(cabinet_object)
-        
+
         for obj_body in [
                 self.cabinet_object,
         ]:
@@ -173,7 +173,7 @@ class HammerCleanup_D0(HammerPlaceEnv, SingleArmEnv_MG):
                 obj_body.asset.append(mat_element)
 
         ingredient_size = [0.015, 0.025, 0.02]
-        
+
         self.placement_initializer = SequentialCompositeSampler(name="ObjectSampler")
 
         self.placement_initializer.append_sampler(
@@ -189,7 +189,7 @@ class HammerCleanup_D0(HammerPlaceEnv, SingleArmEnv_MG):
             reference_pos=self.table_offset,
             z_offset=0.02,
         ))
-        
+
         mujoco_objects = [
             self.sorting_object,
         ]
@@ -197,7 +197,7 @@ class HammerCleanup_D0(HammerPlaceEnv, SingleArmEnv_MG):
         # task includes arena, robot, and objects of interest
         self.model = ManipulationTask(
             mujoco_arena=mujoco_arena,
-            mujoco_robots=[robot.robot_model for robot in self.robots], 
+            mujoco_robots=[robot.robot_model for robot in self.robots],
             mujoco_objects=mujoco_objects,
         )
         self.objects = [
@@ -310,7 +310,7 @@ class HammerCleanup_D1(HammerCleanup_D0):
         """
         Update to include drawer (cabinet) in placement initializer.
         """
-        SingleArmEnv._load_model(self)
+        ManipulationEnv._load_model(self)
 
         # Adjust base pose accordingly
         xpos = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])
@@ -376,7 +376,7 @@ class HammerCleanup_D1(HammerCleanup_D0):
             "specular": "0.4",
             "shininess": "0.1"
         }
-        
+
         greenwood = CustomMaterial(
             texture="WoodGreen",
             tex_name="greenwood",
@@ -391,7 +391,7 @@ class HammerCleanup_D1(HammerCleanup_D0):
             tex_attrib=tex_attrib,
             mat_attrib=mat_attrib,
         )
-        
+
         bluewood = CustomMaterial(
             texture="WoodBlue",
             tex_name="bluewood",
@@ -407,7 +407,7 @@ class HammerCleanup_D1(HammerCleanup_D0):
             tex_attrib=tex_attrib,
             mat_attrib=mat_attrib,
         )
-        
+
         self.sorting_object = self._get_sorting_object()
 
         self.cabinet_object = DrawerObject(name="CabinetObject")
@@ -416,7 +416,7 @@ class HammerCleanup_D1(HammerCleanup_D0):
         # cabinet_object = self.cabinet_object.get_obj()
         # cabinet_object.set("pos", array_to_string((0.2, 0.30, 0.03)))
         # mujoco_arena.table_body.append(cabinet_object)
-        
+
         for obj_body in [
                 self.cabinet_object,
         ]:
@@ -426,9 +426,9 @@ class HammerCleanup_D1(HammerCleanup_D0):
                                                                  custom_material=deepcopy(material))
                 obj_body.asset.append(tex_element)
                 obj_body.asset.append(mat_element)
-        
+
         self._get_placement_initializer()
-        
+
         mujoco_objects = [
             self.sorting_object,
             self.cabinet_object,
@@ -437,7 +437,7 @@ class HammerCleanup_D1(HammerCleanup_D0):
         # task includes arena, robot, and objects of interest
         self.model = ManipulationTask(
             mujoco_arena=mujoco_arena,
-            mujoco_robots=[robot.robot_model for robot in self.robots], 
+            mujoco_robots=[robot.robot_model for robot in self.robots],
             mujoco_objects=mujoco_objects,
         )
         self.objects = [
@@ -452,7 +452,7 @@ class HammerCleanup_D1(HammerCleanup_D0):
         Update to make sure placement initializer can be used to set drawer (cabinet) pose
         even though it doesn't have a joint.
         """
-        SingleArmEnv._reset_internal(self)
+        ManipulationEnv._reset_internal(self)
 
         # Reset all object positions using initializer sampler if we're not directly loading from an xml
         if not self.deterministic_reset:

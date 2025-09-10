@@ -6,7 +6,7 @@ import numpy as np
 from six import with_metaclass
 
 import robosuite
-from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
+from robosuite.environments.manipulation.single_arm_env import ManipulationEnv
 from robosuite.environments.manipulation.nut_assembly import NutAssembly, NutAssemblySquare
 from robosuite.models.arenas import PegsArena
 from robosuite.models.objects import SquareNutObject, RoundNutObject
@@ -16,10 +16,10 @@ from robosuite.utils.observables import Observable, sensor
 from robosuite.utils.mjcf_utils import array_to_string, string_to_array, find_elements
 from robosuite.utils import RandomizationError
 
-from mimicgen.envs.robosuite.single_arm_env_mg import SingleArmEnv_MG
+from mimicgen.envs.robosuite.single_arm_env_mg import ManipulationEnv_MG
 
 
-class NutAssembly_D0(NutAssembly, SingleArmEnv_MG):
+class NutAssembly_D0(NutAssembly, ManipulationEnv_MG):
     """
     Augment robosuite nut assembly task for mimicgen.
     """
@@ -28,7 +28,7 @@ class NutAssembly_D0(NutAssembly, SingleArmEnv_MG):
 
     def edit_model_xml(self, xml_str):
         # make sure we don't get a conflict for function implementation
-        return SingleArmEnv_MG.edit_model_xml(self, xml_str)
+        return ManipulationEnv_MG.edit_model_xml(self, xml_str)
 
     def _get_initial_placement_bounds(self):
         """
@@ -59,7 +59,7 @@ class NutAssembly_D0(NutAssembly, SingleArmEnv_MG):
         )
 
 
-class Square_D0(NutAssemblySquare, SingleArmEnv_MG):
+class Square_D0(NutAssemblySquare, ManipulationEnv_MG):
     """
     Augment robosuite nut assembly square task for mimicgen.
     """
@@ -98,7 +98,7 @@ class Square_D0(NutAssemblySquare, SingleArmEnv_MG):
 
     def edit_model_xml(self, xml_str):
         # make sure we don't get a conflict for function implementation
-        return SingleArmEnv_MG.edit_model_xml(self, xml_str)
+        return ManipulationEnv_MG.edit_model_xml(self, xml_str)
 
     def _get_initial_placement_bounds(self):
         """
@@ -149,7 +149,7 @@ class Square_D1(Square_D0):
         """
         Modify from superclass to keep sampling nut locations until there's no collision with either peg.
         """
-        SingleArmEnv._reset_internal(self)
+        ManipulationEnv._reset_internal(self)
 
         # Reset all object positions using initializer sampler if we're not directly loading from an xml
         if not self.deterministic_reset:
@@ -241,8 +241,8 @@ class Square_D1(Square_D0):
         joints, so we must modify the xml directly before loading the model.
         """
 
-        # skip superclass implementation 
-        SingleArmEnv._load_model(self)
+        # skip superclass implementation
+        ManipulationEnv._load_model(self)
 
         # Adjust base pose accordingly
         xpos = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])
@@ -309,7 +309,7 @@ class Square_D1(Square_D0):
         # task includes arena, robot, and objects of interest
         self.model = ManipulationTask(
             mujoco_arena=mujoco_arena,
-            mujoco_robots=[robot.robot_model for robot in self.robots], 
+            mujoco_robots=[robot.robot_model for robot in self.robots],
             mujoco_objects=self.nuts,
         )
 

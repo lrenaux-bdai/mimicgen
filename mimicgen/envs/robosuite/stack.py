@@ -8,7 +8,7 @@ import numpy as np
 from robosuite.utils.transform_utils import convert_quat
 from robosuite.utils.mjcf_utils import CustomMaterial, find_elements, string_to_array
 
-from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
+from robosuite.environments.manipulation.single_arm_env import ManipulationEnv
 from robosuite.models.arenas import TableArena
 from robosuite.models.objects import BoxObject
 from robosuite.models.tasks import ManipulationTask
@@ -16,10 +16,10 @@ from robosuite.utils.placement_samplers import UniformRandomSampler
 from robosuite.utils.observables import Observable, sensor
 from robosuite.environments.manipulation.stack import Stack
 
-from mimicgen.envs.robosuite.single_arm_env_mg import SingleArmEnv_MG
+from mimicgen.envs.robosuite.single_arm_env_mg import ManipulationEnv_MG
 
 
-class Stack_D0(Stack, SingleArmEnv_MG):
+class Stack_D0(Stack, ManipulationEnv_MG):
     """
     Augment robosuite stack task for mimicgen.
     """
@@ -49,7 +49,7 @@ class Stack_D0(Stack, SingleArmEnv_MG):
 
     def edit_model_xml(self, xml_str):
         # make sure we don't get a conflict for function implementation
-        return SingleArmEnv_MG.edit_model_xml(self, xml_str)
+        return ManipulationEnv_MG.edit_model_xml(self, xml_str)
 
     def reward(self, action=None):
         return Stack.reward(self, action=action)
@@ -95,7 +95,7 @@ class Stack_D0(Stack, SingleArmEnv_MG):
         """
         Loads an xml model, puts it in self.model
         """
-        SingleArmEnv._load_model(self)
+        ManipulationEnv._load_model(self)
 
         # Adjust base pose accordingly
         xpos = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])
@@ -177,7 +177,7 @@ class Stack_D0(Stack, SingleArmEnv_MG):
                 z_rot: 2-tuple for low and high values for uniform sampling of z-rotation
                 reference: np array of shape (3,) for reference position in world frame (assumed to be static and not change)
         """
-        return { 
+        return {
             k : dict(
                 x=(-0.08, 0.08),
                 y=(-0.08, 0.08),
@@ -219,7 +219,7 @@ class Stack_D1(Stack_D0):
 
     def _get_initial_placement_bounds(self):
         max_dim = 0.20
-        return { 
+        return {
             k : dict(
                 x=(-max_dim, max_dim),
                 y=(-max_dim, max_dim),
@@ -332,7 +332,7 @@ class StackThree(Stack_D0):
         """
         Loads an xml model, puts it in self.model
         """
-        SingleArmEnv._load_model(self)
+        ManipulationEnv._load_model(self)
 
         # Adjust base pose accordingly
         xpos = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])
@@ -488,7 +488,7 @@ class StackThree(Stack_D0):
                 z_rot: 2-tuple for low and high values for uniform sampling of z-rotation
                 reference: np array of shape (3,) for reference position in world frame (assumed to be static and not change)
         """
-        return { 
+        return {
             k : dict(
                 x=(-0.10, 0.10),
                 y=(-0.10, 0.10),
@@ -535,7 +535,7 @@ class StackThree_D1(StackThree_D0):
 
     def _get_initial_placement_bounds(self):
         max_dim = 0.20
-        return { 
+        return {
             k : dict(
                 x=(-max_dim, max_dim),
                 y=(-max_dim, max_dim),
