@@ -8,7 +8,7 @@ import numpy as np
 from robosuite.utils.transform_utils import convert_quat
 from robosuite.utils.mjcf_utils import CustomMaterial, find_elements, string_to_array
 
-from robosuite.environments.manipulation.single_arm_env import ManipulationEnv
+from robosuite.environments.manipulation.manipulation_env import ManipulationEnv
 from robosuite.models.arenas import TableArena
 from robosuite.models.objects import BoxObject
 from robosuite.models.tasks import ManipulationTask

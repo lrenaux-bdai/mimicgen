@@ -6,7 +6,7 @@ import numpy as np
 from six import with_metaclass
 
 import robosuite
-from robosuite.environments.manipulation.single_arm_env import ManipulationEnv
+from robosuite.environments.manipulation.manipulation_env import ManipulationEnv
 from robosuite.environments.manipulation.nut_assembly import NutAssembly, NutAssemblySquare
 from robosuite.models.arenas import PegsArena
 from robosuite.models.objects import SquareNutObject, RoundNutObject

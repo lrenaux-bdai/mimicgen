@@ -10,7 +10,7 @@ import numpy as np
 from robosuite.utils.mjcf_utils import CustomMaterial, add_material, find_elements, string_to_array
 
 import robosuite.utils.transform_utils as T
-from robosuite.environments.manipulation.single_arm_env import ManipulationEnv
+from robosuite.environments.manipulation.manipulation_env import ManipulationEnv
 
 from robosuite.models.arenas import TableArena
 from robosuite.models.tasks import ManipulationTask

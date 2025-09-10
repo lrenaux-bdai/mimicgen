@@ -13,7 +13,7 @@ from copy import deepcopy
 
 import robosuite
 import robosuite.utils.transform_utils as T
-from robosuite.environments.manipulation.single_arm_env import ManipulationEnv
+from robosuite.environments.manipulation.manipulation_env import ManipulationEnv
 from robosuite.models.arenas import TableArena
 from robosuite.models.tasks import ManipulationTask
 from robosuite.models.objects import BoxObject, MujocoXMLObject

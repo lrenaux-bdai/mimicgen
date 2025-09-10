@@ -14,7 +14,7 @@ from six import with_metaclass
 from copy import deepcopy
 
 import robosuite
-from robosuite.environments.manipulation.single_arm_env import ManipulationEnv
+from robosuite.environments.manipulation.manipulation_env import ManipulationEnv
 from robosuite.models.arenas import TableArena
 from robosuite.models.tasks import ManipulationTask
 from robosuite.models.objects import HammerObject, MujocoXMLObject
